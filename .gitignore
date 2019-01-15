@@ -1,4 +1,22 @@
 #folder
+
+coat/
+dress/
+inner wear/
+jacket/
+jumper/
+pants/
+shirt/
+skirt/
+vest/
+winter jacket/
+
+Anno/
+Eval/
+result/
+.ipynb_checkpoints/
+
+
 img/
 Anno/
 Eval/
