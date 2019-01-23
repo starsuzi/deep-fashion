@@ -22,3 +22,5 @@ Anno/
 Eval/
 result/
 .ipynb_checkpoints/
+
+*.xml
