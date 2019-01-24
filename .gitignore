@@ -22,5 +22,6 @@ Anno/
 Eval/
 result/
 .ipynb_checkpoints/
+deepfasion_xml/
 
 *.xml
