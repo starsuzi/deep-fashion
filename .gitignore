@@ -16,7 +16,6 @@ Eval/
 result/
 .ipynb_checkpoints/
 
-
 img/
 Anno/
 Eval/
@@ -24,5 +23,9 @@ result/
 .ipynb_checkpoints/
 deepfasion_xml/
 xml/
+img.zip/
 
+*.pptx
+
+>>>>>>> a5a5a4471fced0d4b2d97da157bafd54744fd062
 *.xml
