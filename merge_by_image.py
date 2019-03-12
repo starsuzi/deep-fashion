@@ -102,11 +102,12 @@ lst_other_print = ['abstract chevron print ', 'abstract geo print ', 'abstract p
  'print ', 'print racerback ', 'print satin ', 'print scuba ', 'print shift ', 'print shirt ', 'print skater ',
  'print smock ', 'print smocked ', 'print strapless ', 'print strappy ', 'print surplice ', 'print v-neck ',
  'print woven ', 'printed ', 'southwestern-print ', 'graphic ', 'graphic muscle ', 'graphic racerback ']
-_ , df_final = module.mergeMultipleColumns(lst_other_print, 'other print', df_attr_category_combined, df_final)
+_ , df_final = module.mergeMultipleColumns(lst_other_print, 'others', df_attr_category_combined, df_final)
 
 df_final.insert(loc = 3, column = 'summer', value=df_attr_category_combined['summer '])
 df_final.insert(loc = 3,column='pink', value=df_attr_category_combined['pink '])
 df_final.insert(loc = 3,column='red', value=df_attr_category_combined['red '])
 
+#save
 file_name = "asdfasdf.csv"
 df_final.to_csv("./"+file_name, index=None)

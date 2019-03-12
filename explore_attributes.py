@@ -21,7 +21,7 @@ module.isAttribute(lst_color, df_attr_combined)
 #Check similar columns' images by name
 #for example, check all attributes that contain 'dot'.
 #the result is ['dot ', 'dots ', 'dotted ', 'polka dot ']
-#then, check if they really are same as ETRI's dotted by random images from plotRandomImage()
+#then, check if they really are same as ETRI's dotted by random images from plotRandomImage_by_attribute()
 
 print("\n===Check similar columns' images by name===")
 #sleeve
@@ -32,6 +32,7 @@ print([col for col in df_attr_combined if 'long' in col])
 print([col for col in df_attr_combined if 'check' in col])
 #dot
 print([col for col in df_attr_combined if 'dot' in col])
+#plotRandomImage_by_attribute( 'dot ', 28,df_attr_category_combined)
 #floral
 print([col for col in df_attr_combined if 'flo' in col])
 #stripe
