@@ -4,6 +4,7 @@ import numpy as np
 import module
 
 df_final_bbox= pd.read_csv('./final_with_bbox.csv')
+df_final_bbox = df_final_bbox.fillna('')
 
 df_shirt = df_final_bbox.groupby('category_name').get_group('shirt')
 df_coat = df_final_bbox.groupby('category_name').get_group('coat')
