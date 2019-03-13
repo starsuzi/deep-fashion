@@ -9,14 +9,14 @@ df_final = df_attr_category_combined.iloc[:,:3]
 
 df_winter = df_attr_category_combined.groupby('category_name').get_group('winter jacket')
 
-df_attr_category_combined = module.same_attributes_by_category(df_winter,'winter', df_attr_category_combined)
+df_attr_category_combined = module.set_attributes_by_category(df_winter,'winter', df_attr_category_combined)
 df_final.insert(loc = 3,column='winter', value=df_attr_category_combined['winter'])
 
 df_woman_dress = df_attr_category_combined.groupby('category_name').get_group('dress')
 df_woman_skirt = df_attr_category_combined.groupby('category_name').get_group('skirt')
 df_woman = pd.concat([df_woman_skirt, df_woman_dress])
 
-df_attr_category_combined = module.same_attributes_by_category(df_woman,'woman', df_attr_category_combined)
+df_attr_category_combined = module.set_attributes_by_category(df_woman,'woman', df_attr_category_combined)
 df_final.insert(loc = 3,column='woman', value=df_attr_category_combined['woman'])
 
 #long skirts

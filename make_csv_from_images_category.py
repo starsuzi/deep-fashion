@@ -3,13 +3,58 @@ import pandas as pd
 import csv
 import os, glob
 
-df_attr_combined = pd.read_csv('./Anno/changed/etri/attr_combined.csv')
+#
+def collapseBlanks(original_path, saving_path):
+    with open(original_path, 'r') as file :
+         lines = file.readlines()
+    
+    for i, line in enumerate(lines):
+        collapsed = ' '.join(line.split())
+        lines[i] = lines[i].replace(line, collapsed)
+        
+    with open(saving_path, 'w') as file :
+        for i in range(len(lines)-1):
+            file.write(lines[i+1]+'\n')
 
 def createCategoryDataFrame(lst_category_fname, category_label, category_name):
     df_category = pd.DataFrame(lst_category_fname, columns=['image_name'])
     df_category.insert(1,'category_label', category_label)
     df_category.insert(1,'category_name', category_name)
     return df_category
+
+collapseBlanks("./Anno/original/list_attr_img.txt", "./Anno/changed/list_attr_img.txt")
+collapseBlanks("./Anno/original/list_attr_cloth.txt", "./Anno/changed/list_attr_cloth.txt")
+collapseBlanks("./Anno/original/list_category_cloth.txt", "./Anno/changed/list_category_cloth.txt")
+collapseBlanks("./Anno/original/list_category_img.txt", "./Anno/changed/list_category_img.txt")
+collapseBlanks("./Anno/original/list_bbox.txt", "./Anno/changed/lst_bbox.txt")
+
+with open("./Anno/changed/list_attr_cloth.txt", 'r') as file :
+    filedata = file.read()
+filedata = filedata.replace('attribute_type', ',attribute_type')
+for attribute_type in range(1,6):
+    filedata = filedata.replace(str(attribute_type), ','+str(attribute_type))
+with open("./Anno/changed/list_attr_cloth.txt", 'w') as file :
+    file.write(filedata)
+
+#create dataframes
+df_attr_img = pd.read_csv('./Anno/changed/list_attr_img.txt', header = None, skiprows=1, sep = ' ')
+df_attr_cloth = pd.read_csv('./Anno/changed/list_attr_cloth.txt', sep = ',') 
+df_category_cloth = pd.read_csv('./Anno/changed/list_category_cloth.txt', sep = ' ')
+df_category_img = pd.read_csv('./Anno/changed/list_category_img.txt',sep = ' ') #, index_col='image_name'
+df_bbox = pd.read_csv('./Anno/changed/lst_bbox.txt',sep = ' ') 
+
+#inserting category_label to category_cloth
+df_category_cloth.insert(0, 'category_label', range(1, len(df_category_cloth)+1))
+
+# combining dataframes
+## Combining image and category name
+df_category_combined = pd.merge(df_category_cloth, df_category_img)
+## Combining image and attribute name
+lst_attr = df_attr_cloth['attribute_name ']
+df_attr_img.columns = pd.Series(['image_name']).append(lst_attr,ignore_index=True)
+df_attr_combined= df_attr_img
+## Combining attributes and category
+df_attr_category_combined = pd.merge(df_attr_combined, df_category_combined)
 
 lst_coat_fname = [f.name[:-4] for f in os.scandir('./coat') if f.is_file()]
 lst_dress_fname = [f.name[:-4] for f in os.scandir('./dress') if f.is_file()]
@@ -39,10 +84,23 @@ df_dress_attr_combined = pd.merge(df_dress, df_attr_combined)
 df_pants_attr_combined = pd.merge(df_pants, df_attr_combined)
 df_skirt_attr_combined = pd.merge(df_skirt, df_attr_combined)
 
-df_attr_category_combined = pd.concat([df_shirt_attr_combined, df_jumper_attr_combined, df_jacket_attr_combined, df_winterJacket_attr_combined, df_coat_attr_combined, df_dress_attr_combined, df_pants_attr_combined, df_skirt_attr_combined],
+df_category_attr_combined_from_imgfile = pd.concat([df_shirt_attr_combined, df_jumper_attr_combined, df_jacket_attr_combined, df_winterJacket_attr_combined, df_coat_attr_combined, df_dress_attr_combined, df_pants_attr_combined, df_skirt_attr_combined],
                                       ignore_index=True)
 
+#export
+#attr_combined.csv
+file_name = "attr_combined.csv"
+df_attr_combined.to_csv("./Anno/changed/"+file_name, index=None)
+#category_combined.csv
+file_name = "category_combined.csv"
+df_category_combined.to_csv("./Anno/changed/"+file_name, index=None)
+#attr_category_combined.csv
+file_name = "attr_category_combined.csv"
+df_attr_category_combined.to_csv("./Anno/changed/"+file_name, index=None)
+#bbox.csv
+file_name = "bbox.csv"
+df_bbox.to_csv("./Anno/changed/"+file_name, index=None)
 #attr_category_combined.csv
 file_name = "attr_category_combined_asdf.csv"
-#df_attr_category_combined.to_csv("./Anno/changed/etri/"+file_name, index=None)
-df_attr_category_combined.to_csv("./"+file_name, index=None)
+#df_category_attr_combined_from_imgfile.to_csv("./Anno/changed/etri/"+file_name, index=None)
+df_category_attr_combined_from_imgfile.to_csv("./"+file_name, index=None)
