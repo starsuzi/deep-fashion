@@ -12,6 +12,7 @@ lst_striped = []
 lst_dot = []
 lst_checker = []
 
+#append list if the filename contains pattern attributes(floral, rose, stiped, dot...)
 lst_floral, lst_striped, lst_dot, lst_checker = module.find_pattern_attribute_in_name("./dress/",lst_floral, lst_striped, lst_dot, lst_checker)
 lst_floral, lst_striped, lst_dot, lst_checker = module.find_pattern_attribute_in_name("./skirt/",lst_floral, lst_striped, lst_dot, lst_checker)
 lst_floral, lst_striped, lst_dot, lst_checker = module.find_pattern_attribute_in_name("./shirt/",lst_floral, lst_striped, lst_dot, lst_checker)
@@ -34,7 +35,7 @@ for i,img_name in enumerate(df_name_merged['image_name']):
 lst_short_sleeves = []
 lst_long_sleeves = []
 lst_no_sleeves = []
-
+#append list if the filename contains sleeve attributes(short sleeve, long sleeve, no sleeve,...)
 lst_short_sleeves, lst_long_sleeves, lst_no_sleeves = module.find_sleeves_attribute_in_name("./dress/",lst_short_sleeves, lst_long_sleeves, lst_no_sleeves)
 lst_short_sleeves, lst_long_sleeves, lst_no_sleeves = module.find_sleeves_attribute_in_name("./jacket/",lst_short_sleeves, lst_long_sleeves, lst_no_sleeves)
 lst_short_sleeves, lst_long_sleeves, lst_no_sleeves = module.find_sleeves_attribute_in_name("./jumper/",lst_short_sleeves, lst_long_sleeves, lst_no_sleeves)

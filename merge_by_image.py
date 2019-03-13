@@ -7,15 +7,15 @@ import module
 df_attr_category_combined = pd.read_csv('./attr_category_combined_asdf.csv')
 df_final = df_attr_category_combined.iloc[:,:3]
 
+#Since all elements in winter jacket category should have winter attribute, create df_winter
 df_winter = df_attr_category_combined.groupby('category_name').get_group('winter jacket')
-
 df_attr_category_combined = module.set_attributes_by_category(df_winter,'winter', df_attr_category_combined)
 df_final.insert(loc = 3,column='winter', value=df_attr_category_combined['winter'])
 
+#Since all elements in winter skirt and dress category should have winter attribute, create df_woman
 df_woman_dress = df_attr_category_combined.groupby('category_name').get_group('dress')
 df_woman_skirt = df_attr_category_combined.groupby('category_name').get_group('skirt')
 df_woman = pd.concat([df_woman_skirt, df_woman_dress])
-
 df_attr_category_combined = module.set_attributes_by_category(df_woman,'woman', df_attr_category_combined)
 df_final.insert(loc = 3,column='woman', value=df_attr_category_combined['woman'])
 
@@ -23,17 +23,22 @@ df_final.insert(loc = 3,column='woman', value=df_attr_category_combined['woman']
 lst_long_skirt = ['belted maxi ', 'chiffon maxi ', 'combo maxi ', 'crochet maxi ', 'cutout maxi ',
  'embroidered maxi ', 'floral maxi ', 'flounce maxi ', 'gauze maxi ', 'high-slit maxi ',
  'knit maxi ', 'lace maxi ', 'm-slit maxi ', 'maxi ', 'longline ']
-df_woman_skirt_temp = df_woman_skirt.iloc[:, :3]
-df_woman_skirt_temp = df_woman_skirt.iloc[:, :3]
-df_woman_skirt.insert(loc=0,column='temp',value=((df_woman_skirt[lst_long_skirt[0]] == 1) | (df_woman_skirt[lst_long_skirt[1]] == 1)).astype(int).replace(0, -1))
 
+df_woman_skirt_temp = df_woman_skirt.iloc[:, :3]
+#merge two columns in temp column with OR operation
+df_woman_skirt.insert(loc=0,column='temp',value=((df_woman_skirt[lst_long_skirt[0]] == 1) | (df_woman_skirt[lst_long_skirt[1]] == 1)).astype(int).replace(0, -1))
+#merge other columns in lst_long_skirt by iterating for loop
 for i in range(2,len(lst_long_skirt)):
     df_woman_skirt['temp'] = ((df_woman_skirt['temp'] == 1) | (df_woman_skirt[lst_long_skirt[i]] == 1)).astype(int).replace(0, -1)
 df_woman_skirt_temp.insert(loc = 2,column='long', value= (df_woman_skirt['temp']))
-
+#drop temp column in df_woman_skirt
 df_woman_skirt = df_woman_skirt.drop(['temp'], axis=1)
+#insert 'long' column to df_attr_category_combined
 df_attr_category_combined.insert(3, 'long',np.NaN )
+# if df_woman_skirt_temp's data in 'long' column's value is 1, get image name from 'image_name' column
 set_long_skirt_name=set(df_woman_skirt_temp.loc[df_woman_skirt_temp['long'] == 1]['image_name'])
+# iterate df_attr_category_combined['image_name'], and if the element is in set_long_skirt_name,
+# set value of df_attr_category_combined['long'] with 1
 for i,img_name in enumerate(df_attr_category_combined['image_name']):
     if img_name in set_long_skirt_name:
        df_attr_category_combined.loc[i,'long'] = 1
@@ -42,17 +47,24 @@ df_attr_category_combined['long'] = df_attr_category_combined['long'].astype(int
 
 #short long pants
 df_attr_category_combined_temp = df_attr_category_combined
+#set image name as index
 df_attr_category_combined_temp.set_index('image_name', inplace= True)
+#if the image name contains Shorts or Trunk or Sweatshorts, append lst_short
 lst_short = df_attr_category_combined.filter(like='Shorts', axis=0).index.tolist() + df_attr_category_combined.filter(like='Trunk', axis=0).index.tolist() + df_attr_category_combined.filter(like='Sweatshorts', axis=0).index.tolist()
+#create df_short for short pants
 df_short = df_attr_category_combined_temp[df_attr_category_combined_temp.index.isin(lst_short)]
+#insert 'short' column in df_short with value 1
 df_short.insert(2,  'short', value=1)
 df_short.reset_index(inplace=True)
 df_attr_category_combined_temp.reset_index(inplace=True)
+#merge df_attr_category_combined and df_short with outer join
 df_attr_category_combined = df_attr_category_combined_temp.merge(df_short, how='outer')
+#fill Nan value with -1
 df_attr_category_combined['short'].fillna(value = -1, inplace = True)
 df_attr_category_combined['short'] = df_attr_category_combined['short'].astype(int)
-
+#create dataframe for pants
 df_pants = df_attr_category_combined.groupby('category_name').get_group('pants')
+#
 df_long_pants = df_pants[~df_pants['image_name'].isin(lst_short)]
 df_long_pants.insert(3, 'long_pants', 1)
 set_long_pants_name=set(df_long_pants.loc[df_long_pants['long_pants'] == 1]['image_name'])
