@@ -33,13 +33,16 @@ def rename_Image_name_in_txt_file(path):
     with open(path, 'r') as file :
         filedata = file.read()
     filedata = filedata.replace('.jpg', '')
+    with open(path, 'w') as file :
+        file.write(filedata)
+
     #In XML form, & gives error
     with open(path, 'r') as file :
         filedata = file.read()
     filedata = filedata.replace('&', 'and')
-    
     with open(path, 'w') as file :
         file.write(filedata)
+
 
 #In XML form, & gives error, so rename the image filenames
 def replaceNpercent(path):
@@ -74,20 +77,38 @@ def createCategoryDataFrame(lst_category_fname, category_label, category_name):
     df_category.insert(1,'category_name', category_name)
     return df_category
 
-renameImages('./coat/')
-renameImages('./dress/')
-renameImages('./jacket/')
-renameImages('./jumper/')
-renameImages('./pants/')
-renameImages('./skirt/')
-renameImages('./winter jacket/')
-renameImages('./shirt/')
+####################
+#Rename Image files#
+####################
+
+#already done
+#renameImages('./coat/')
+#renameImages('./dress/')
+#renameImages('./jacket/')
+#renameImages('./jumper/')
+#renameImages('./pants/')
+#renameImages('./skirt/')
+#renameImages('./winter jacket/')
+#renameImages('./shirt/')
+
+replaceNpercent('./coat/')
+replaceNpercent('./dress/')
+replaceNpercent('./jacket/')
+replaceNpercent('./jumper/')
+replaceNpercent('./pants/')
+replaceNpercent('./skirt/')
+replaceNpercent('./winter jacket/')
+replaceNpercent('./shirt/')
+
+####################
+#Change text files #
+####################
 
 collapseBlanks("./Anno/original/list_attr_img.txt", "./Anno/changed/list_attr_img.txt")
 collapseBlanks("./Anno/original/list_attr_cloth.txt", "./Anno/changed/list_attr_cloth.txt")
 collapseBlanks("./Anno/original/list_category_cloth.txt", "./Anno/changed/list_category_cloth.txt")
 collapseBlanks("./Anno/original/list_category_img.txt", "./Anno/changed/list_category_img.txt")
-collapseBlanks("./Anno/original/list_bbox.txt", "./Anno/changed/lst_bbox.txt")
+collapseBlanks("./Anno/original/list_bbox.txt", "./Anno/changed/list_bbox.txt")
 
 #add , for split
 with open("./Anno/changed/list_attr_cloth.txt", 'r') as file :
@@ -98,17 +119,18 @@ for attribute_type in range(1,6):
 with open("./Anno/changed/list_attr_cloth.txt", 'w') as file :
     file.write(filedata)
 
+#Rename image file name in text files
 rename_Image_name_in_txt_file("./Anno/changed/list_attr_img.txt")
 rename_Image_name_in_txt_file("./Anno/changed/list_bbox.txt")
 rename_Image_name_in_txt_file("./Anno/changed/list_category_img.txt")
-rename_Image_name_in_txt_file("./Anno/changed/list_landmarks.txt")
+
 
 #create dataframes
 df_attr_img = pd.read_csv('./Anno/changed/list_attr_img.txt', header = None, skiprows=1, sep = ' ')
 df_attr_cloth = pd.read_csv('./Anno/changed/list_attr_cloth.txt', sep = ',') 
 df_category_cloth = pd.read_csv('./Anno/changed/list_category_cloth.txt', sep = ' ')
 df_category_img = pd.read_csv('./Anno/changed/list_category_img.txt',sep = ' ') #, index_col='image_name'
-df_bbox = pd.read_csv('./Anno/changed/lst_bbox.txt',sep = ' ') 
+df_bbox = pd.read_csv('./Anno/changed/list_bbox.txt',sep = ' ') 
 
 #inserting category_label to category_cloth
 df_category_cloth.insert(0, 'category_label', range(1, len(df_category_cloth)+1))
@@ -122,6 +144,10 @@ df_attr_img.columns = pd.Series(['image_name']).append(lst_attr,ignore_index=Tru
 df_attr_combined= df_attr_img
 #- Combining attributes and category
 df_attr_category_combined = pd.merge(df_attr_combined, df_category_combined)
+
+#######################
+#get data of img files#
+#######################
 
 #list of image file names in category folder
 lst_coat_fname = [f.name[:-4] for f in os.scandir('./coat') if f.is_file()]
@@ -159,16 +185,16 @@ df_category_attr_combined_from_imgfile = pd.concat([df_shirt_attr_combined, df_j
 #export
 #attr_combined.csv
 file_name = "attr_combined.csv"
-df_attr_combined.to_csv("./Anno/changed/"+file_name, index=None)
+df_attr_combined.to_csv("./csv/"+file_name, index=None)
 #category_combined.csv
 file_name = "category_combined.csv"
-df_category_combined.to_csv("./Anno/changed/"+file_name, index=None)
+df_category_combined.to_csv("./csv/"+file_name, index=None)
 #attr_category_combined.csv
 file_name = "attr_category_combined.csv"
-df_attr_category_combined.to_csv("./Anno/changed/"+file_name, index=None)
+df_attr_category_combined.to_csv("./csv/"+file_name, index=None)
 #bbox.csv
 file_name = "bbox.csv"
-df_bbox.to_csv("./Anno/changed/"+file_name, index=None)
-#attr_category_combined_asdf
-file_name = "attr_category_combined_asdf.csv"
-df_category_attr_combined_from_imgfile.to_csv("./"+file_name, index=None)
+df_bbox.to_csv("./csv/"+file_name, index=None)
+#df_category_attr_combined_from_imgfile.csv
+file_name = "df_category_attr_combined_from_imgfile.csv"
+df_category_attr_combined_from_imgfile.to_csv("./csv/"+file_name, index=None)

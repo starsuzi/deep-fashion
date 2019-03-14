@@ -2,8 +2,8 @@ import pandas as pd
 import csv
 import numpy as np
 
-df_attr_chosen= pd.read_csv('./name_merged.csv')
-df_bbox= pd.read_csv('./Anno/changed/etri/bbox.csv')
+df_attr_chosen= pd.read_csv('./csv/merged_by_img_name.csv')
+df_bbox= pd.read_csv('./csv/bbox.csv')
 
 lst_img = df_attr_chosen['image_name'].tolist()
 
@@ -86,14 +86,9 @@ for i,img_name in enumerate(df_attr_chosen['image_name']):
 df_final = df_attr_chosen.iloc[:,:8]
 
 df_final_bbox=pd.merge(df_final, df_bbox)
-#df_final_bbox = df_final_bbox.fillna('')
 
-#final_with_bbox.csv
-file_name = "final_with_bbox.csv"
-df_final_bbox.to_csv("./"+file_name, index=None)
-
-#df_final.csv
-#file_name = "final.csv"
-#df_final.to_csv("./"+file_name, index=None)
+#final_csv_for_xml.csv
+file_name = "final_csv_for_xml.csv"
+df_final_bbox.to_csv("./csv/"+file_name, index=None)
 
 
