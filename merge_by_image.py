@@ -64,21 +64,31 @@ df_attr_category_combined['short'].fillna(value = -1, inplace = True)
 df_attr_category_combined['short'] = df_attr_category_combined['short'].astype(int)
 #create dataframe for pants
 df_pants = df_attr_category_combined.groupby('category_name').get_group('pants')
-#
+#create dataframe for the long pants
+#all the pants that are not shorts are long pants
 df_long_pants = df_pants[~df_pants['image_name'].isin(lst_short)]
 df_long_pants.insert(3, 'long_pants', 1)
+# set_long_pants_name: if df_long_pants's data in 'long_pants' column's value is 1, get image name from 'image_name' column
+# set_short_pants_name: if df_short's data in 'short' column's value is 1, get image name from 'image_name' column
 set_long_pants_name=set(df_long_pants.loc[df_long_pants['long_pants'] == 1]['image_name'])
 set_short_pants_name =set(df_short.loc[df_short['short'] == 1]['image_name'])
+# iterate df_attr_category_combined['image_name'], and if the element is in set_long_pants_name,
+# set value of df_attr_category_combined['long_pants'] with 1
+# if the element is in set_short_pants_name,
+# set value of df_attr_category_combined['short'] with 1
 for i,img_name in enumerate(df_attr_category_combined['image_name']):
     if img_name in set_long_pants_name:
         df_attr_category_combined.loc[i,'long_pants'] = 1
     elif img_name in set_short_pants_name:
         df_attr_category_combined.loc[i,'short'] = 1
+# merge long column and long_pants column
 df_attr_category_combined['long'] = module.mergeColumns('long', 'long_pants', df_attr_category_combined)
 df_attr_category_combined.drop(['long_pants'], axis=1, inplace=True)
+#insert long column and short column
 df_final.insert(loc = 3,column='long', value=df_attr_category_combined['long'])
 df_final.insert(loc = 3,column='short', value=df_attr_category_combined['short'])
 
+# merge columns in list to one column to df_final
 lst_long_sleeves = ['long sleeve ', 'long-sleeve ', 'long-sleeved ']
 _ , df_final = module.mergeMultipleColumns(lst_long_sleeves, 'long sleeves', df_attr_category_combined, df_final)
 
@@ -116,6 +126,7 @@ lst_other_print = ['abstract chevron print ', 'abstract geo print ', 'abstract p
  'print woven ', 'printed ', 'southwestern-print ', 'graphic ', 'graphic muscle ', 'graphic racerback ']
 _ , df_final = module.mergeMultipleColumns(lst_other_print, 'others', df_attr_category_combined, df_final)
 
+#insert columns which does not have to be merged
 df_final.insert(loc = 3, column = 'summer', value=df_attr_category_combined['summer '])
 df_final.insert(loc = 3,column='pink', value=df_attr_category_combined['pink '])
 df_final.insert(loc = 3,column='red', value=df_attr_category_combined['red '])

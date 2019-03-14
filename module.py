@@ -103,6 +103,7 @@ def mergeMultipleColumns(lst_attr, merged_col, df_attr_category_combined, df_fin
 #for example, all skirt and dress categories should have woman attribute, so set 'woman' attribute's value as 1
 def set_attributes_by_category(df, attribute, df_attr_category_combined):
     df.insert(3, attribute, value=1)
+    #merge dataframes by outer join
     df_attr_category_combined = df_attr_category_combined.merge(df, how='outer')
     df_attr_category_combined[attribute].fillna(value = -1, inplace = True)
     df_attr_category_combined[attribute] = df_attr_category_combined[attribute].astype(int)
